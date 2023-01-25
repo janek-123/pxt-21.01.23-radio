@@ -11,8 +11,7 @@ function SetUp() {
 let codeArchive: Data[] = [nData(7, 1)]
 function NormalSender() {
     let nextCode = 7
-    let nextGrp = 0
-    let jumpNext = false
+    //let nextGrp = 0
     let confirmed = false;
 
     input.onButtonPressed(Button.AB, () => { confirmed = false; basic.clearScreen(); })
@@ -31,7 +30,7 @@ function NormalSender() {
 
         codeArchive.pop();
         nextCode = codeArchive[codeArchive.length - 1].code;
-        nextGrp = codeArchive[codeArchive.length - 1].grp;
+        let nextGrp = codeArchive[codeArchive.length - 1].grp;
 
         radio.setGroup(nextGrp);
         Send(nextCode);
@@ -43,13 +42,15 @@ function NormalSender() {
     //value = string { newgrp, newcode }, int = serial
     // => <encserial> : <newCode> & "grp" : <group>
     radio.onReceivedValue(function (recStr: string, recNum: number) {
-        if (beacon) return
+        if (beacon) return;
+        console.log("received");
         if (recStr == mySerial) {
             if (recNum == 0) {
                 basic.showString("W")
             } else {
                 const remoteID = radio.receivedPacket(RadioPacketProperty.SerialNumber);
                 nextCode = recNum
+                AddDataToCodeArchive(false, recNum);
                 //codeArchive.push({ code: recNum })
                 whaleysans.showNumber(recNum)
 
@@ -59,13 +60,14 @@ function NormalSender() {
             }
 
         } else if (recStr == "grp") {
-            nextGrp = recNum;
+            //nextGrp = recNum;
             //radio.setGroup(nextGrp);
-            codeArchive[codeArchive.length - 1].grp = recNum;
-            codeArchive.forEach(code => console.log(code));
+            AddDataToCodeArchive(true, recNum);
+            //codeArchive[codeArchive.length - 1].grp = recNum;
+            //codeArchive.forEach(code => console.log(code));
             
             console.logValue("Received grp", recNum + "\n\r");
-            console.logValue("nextGrp", nextGrp);
+            console.logValue("nextGrp", recNum);
         }
     })
 }
@@ -73,13 +75,21 @@ function NormalSender() {
 let dataCreated = false;
 
 function AddDataToCodeArchive(grp : boolean, value ?: number){
+    console.log("AddData");
+
     if (!dataCreated) {
-        codeArchive.push(null);
+        codeArchive.push(nData(NaN, NaN));
         dataCreated = true;
-    }    
+    }
 
     if (grp) codeArchive[codeArchive.length - 1].grp = value;
     else codeArchive[codeArchive.length - 1].code = value;
+
+    let data = codeArchive[codeArchive.length - 1];
+
+    if (dataIsFull(data)){
+        OnFullDataReceived(data.grp);
+    }
 }
 
 function OnFullDataReceived(group : number)
