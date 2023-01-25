@@ -10,8 +10,8 @@ function BeaconSender() {
 
     basic.forever(function () {
         basic.pause(500);
-        radio.sendValue(Utility.encodeSerial(randint(10, 9999999999)), 81);
-        radio.sendValue("grp", 99);
+        /*radio.sendValue(Utility.encodeSerial(randint(10, 9999999999)), 81);
+        radio.sendValue("grp", 99);*/
         radio.sendNumber(7);
     })
 }
