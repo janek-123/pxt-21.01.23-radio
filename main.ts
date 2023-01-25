@@ -7,6 +7,8 @@ Beacon - reaguje na kód a posílá nové grp a codeArchive
 let beacon = false
 let beaconSet = false
 
+const winNum = 1;
+
 input.onButtonPressed(Button.AB, () => {
     if (beaconSet) return;
 

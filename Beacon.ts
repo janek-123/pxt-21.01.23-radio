@@ -18,7 +18,7 @@ function BeaconSender() {
 
 function BeaconSend(groupCodes: Data[], currentCode: number) {
     if (currentCode == groupCodes.length) {
-        radio.sendValue(Utility.encodeSerial(radio.receivedPacket(RadioPacketProperty.SerialNumber)), 0)
+        radio.sendValue(Utility.encodeSerial(radio.receivedPacket(RadioPacketProperty.SerialNumber)), winNum)
     } else {
         radio.sendValue(Utility.encodeSerial(radio.receivedPacket(RadioPacketProperty.SerialNumber)), groupCodes[currentCode].code)
         radio.sendValue("grp", groupCodes[currentCode].grp)

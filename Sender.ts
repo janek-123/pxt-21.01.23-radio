@@ -40,23 +40,20 @@ function NormalSender() {
     })
     /**/
 
-    // beacon: 
-    // <= "7" + serial
-    //value = string { newgrp, newcode }, int = serial
-    // => <encserial> : <newCode> & "grp" : <group>
     radio.onReceivedValue(function (recStr: string, recNum: number) {
         if(!receiveData) return;
         
         if (beacon) return;
         console.log("received");
         if (recStr == mySerial) {
-            if (recNum == 0) {
-                basic.showString("W")
+            if (recNum == winNum) {
+                basic.showString("W");
+                basic.pause(10000);
             } else {
                 nextCode = recNum
                 AddDataToCodeArchive(false, recNum);
                 //codeArchive.push({ code: recNum })
-                whaleysans.showNumber(recNum)
+                whaleysans.showNumber(recNum);
 
                 console.logValue("Received value", recStr + " : " + recNum + "\n\r");
                 console.logValue("nextCode", nextCode);
@@ -93,7 +90,6 @@ function AddDataToCodeArchive(grp : boolean, value ?: number){
 
 function OnFullDataReceived(group : number)
 {
-    console.log("OnFullDataReceived");
     radio.setGroup(group);
     dataCreated = false;
 }
