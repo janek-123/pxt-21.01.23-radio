@@ -8,11 +8,10 @@ function SetUp() {
     radio.setGroup(1);
 }
 
+let codeArchive: Data[] = [nData(7, 1)]
 function NormalSender() {
-    let codeArchive: Data[] = [nData(7, 1)]
     let nextCode = 7
     let nextGrp = 0
-    let receiveGrpEnabled = false
     let jumpNext = false
     let confirmed = false;
 
@@ -49,10 +48,9 @@ function NormalSender() {
             if (recNum == 0) {
                 basic.showString("W")
             } else {
-                receiveGrpEnabled = true;
                 const remoteID = radio.receivedPacket(RadioPacketProperty.SerialNumber);
                 nextCode = recNum
-                codeArchive.push({ code: recNum })
+                //codeArchive.push({ code: recNum })
                 whaleysans.showNumber(recNum)
 
                 console.logValue("Received value", recStr + " : " + recNum + "\n\r");
@@ -60,10 +58,9 @@ function NormalSender() {
                 console.logValue("nextCode", nextCode);
             }
 
-        } else if (recStr == "grp" && receiveGrpEnabled) {
-            receiveGrpEnabled = false;
+        } else if (recStr == "grp") {
             nextGrp = recNum;
-            radio.setGroup(nextGrp);
+            //radio.setGroup(nextGrp);
             codeArchive[codeArchive.length - 1].grp = recNum;
             codeArchive.forEach(code => console.log(code));
             
@@ -71,6 +68,23 @@ function NormalSender() {
             console.logValue("nextGrp", nextGrp);
         }
     })
+}
+
+let dataCreated = false;
+
+function AddDataToCodeArchive(grp : boolean, value ?: number){
+    if (!dataCreated) {
+        codeArchive.push(null);
+        dataCreated = true;
+    }    
+
+    if (grp) codeArchive[codeArchive.length - 1].grp = value;
+    else codeArchive[codeArchive.length - 1].code = value;
+}
+
+function OnFullDataReceived(group : number)
+{
+    radio.setGroup(group);
 }
 
 function Send(nextCode: number): void { // pičo
